@@ -1,51 +1,50 @@
-const video = document.getElementById('video');
-const canvas = document.getElementById('processing-canvas');
-const captureBtn = document.getElementById('capture-btn');
-const resultDiv = document.getElementById('result');
-const statusDiv = document.getElementById('status');
-
-
+const video = document.getElementById('vid');
+const log = document.getElementById('log');
+const redLight = document.getElementById('red');
+const greenLight = document.getElementById('green');
+const signalText = document.getElementById('signal-text');
 navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
-    .then(stream => { 
-        video.srcObject = stream; 
-        statusDiv.innerText = "Status: Ready to Scan";
+    .then(stream => {
+        video.srcObject = stream;
+        log.innerText = "System Online: Scanning Lane 1";
     })
-    .catch(err => { statusDiv.innerText = "Error: " + err.message; });
-
-
-captureBtn.addEventListener('click', async () => {
-    statusDiv.innerText = "Status: Capturing...";
+    .catch(err => {
+        log.innerText = "SENSOR ERROR: " + err.message;
+    });
+async function processTraffic() {
+    log.innerText = "Processing Lane Density...";
     
-    const ctx = canvas.getContext('2d');
+    const canvas = document.getElementById('canvas');
+    const context = canvas.getContext('2d');
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
-    ctx.drawImage(video, 0, 0);
+    context.drawImage(video, 0, 0);
+    try {
+        const result = await Tesseract.recognize(canvas.toDataURL(), 'eng');
+        const text = result.data.text.replace(/[^A-Z0-9]/gi, "");
+        const density = text.length;
 
+        log.innerText = `Lane Density Score: ${density}`;
 
-    let imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    let data = imageData.data;
-    for (let i = 0; i < data.length; i += 4) {
-        
-        let avg = (data[i] + data[i + 1] + data[i + 2]) / 3;
-      
-        let val = avg > 128 ? 255 : 0; 
-        data[i] = data[i + 1] = data[i + 2] = val;
+        if (density > 3) {
+            triggerGreen();
+        }
+    } catch (error) {
+        console.error("OCR Failed:", error);
     }
-    ctx.putImageData(imageData, 0, 0);
-    
+}
 
-    statusDiv.innerText = "Status: Analyzing Text...";
+function triggerGreen() {
+    redLight.classList.remove('active-red');
+    greenLight.classList.add('active-green');
+    signalText.innerText = "STATUS: GREEN (TRAFFIC DETECTED)";
+    signalText.style.color = "#2ecc71";
+    setTimeout(() => {
+        greenLight.classList.remove('active-green');
+        redLight.classList.add('active-red');
+        signalText.innerText = "STATUS: RED (WAITING)";
+        signalText.style.color = "#ffffff";
+    }, 6000);
+}
 
-    
-    Tesseract.recognize(canvas.toDataURL(), 'eng', {
-        logger: m => console.log(m.progress)
-    }).then(({ data: { text } }) => {
-        
-        const plate = text.replace(/[^A-Z0-9]/gi, "").toUpperCase();
-        resultDiv.innerText = "NUMBER: " + (plate || "NOT DETECTED");
-        statusDiv.innerText = "Status: Scan Complete";
-    }).catch(e => {
-        statusDiv.innerText = "Status: Error Processing";
-        console.error(e);
-    });
-});
+setInterval(processTraffic, 10000);
