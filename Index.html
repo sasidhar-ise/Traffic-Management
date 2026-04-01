@@ -2,24 +2,33 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Vehicle Number Capture</title>
-    <link rel="stylesheet" href="style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NP Capture Pro</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; text-align: center; background: #1a1a1a; color: white; }
+        #video-container { position: relative; display: inline-block; border: 4px solid #444; border-radius: 10px; }
+        video { width: 100%; max-width: 600px; display: block; }
+        .guide-box { 
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 70%; height: 60px; border: 3px dashed #00ff00; pointer-events: none;
+        }
+        button { background: #28a745; color: white; padding: 15px 30px; font-size: 18px; border: none; cursor: pointer; margin-top: 20px; border-radius: 5px; }
+        #result { margin-top: 20px; font-size: 24px; color: #00ff00; background: #333; padding: 15px; display: inline-block; min-width: 200px; }
+    </style>
 </head>
 <body>
-    <div class="container">
-        <h2>Vehicle Number Plate Capture</h2>
-        <div class="camera-box">
-            <video id="video" autoplay playsinline></video>
-            <div class="overlay"></div> 
-        </div>
-        <button id="capture">Capture & Identify</button>
-        <canvas id="canvas" style="display:none;"></canvas>
-        <div class="result-area">
-            <p>Detected Number: <strong id="plate-number">Waiting...</strong></p>
-            <div id="status">Status: Ready</div>
-        </div>
+    <h2>Vehicle Number Plate Recognition</h2>
+    <div id="video-container">
+        <video id="video" autoplay playsinline></video>
+        <div class="guide-box"></div>
     </div>
+    <br>
+    <button id="capture-btn">SCAN PLATE</button>
+    <div id="status">Status: Initializing Camera...</div>
+    <div id="result">NUMBER: ----</div>
+
+    <canvas id="processing-canvas" style="display:none;"></canvas>
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
-    <script src="script.js"></script>
+    <script src="app.js"></script>
 </body>
 </html>
