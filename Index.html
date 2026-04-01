@@ -1,1 +1,25 @@
-
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Vehicle Number Capture</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h2>Vehicle Number Plate Capture</h2>
+        <div class="camera-box">
+            <video id="video" autoplay playsinline></video>
+            <div class="overlay"></div> 
+        </div>
+        <button id="capture">Capture & Identify</button>
+        <canvas id="canvas" style="display:none;"></canvas>
+        <div class="result-area">
+            <p>Detected Number: <strong id="plate-number">Waiting...</strong></p>
+            <div id="status">Status: Ready</div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
