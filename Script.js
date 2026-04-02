@@ -5,7 +5,6 @@ const goLight = document.getElementById('go-light');
 const instruction = document.getElementById('instruction');
 const canvas = document.getElementById('proc-canvas');
 
-// 1. Activate Camera Sensor
 navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
     .then(stream => {
         video.srcObject = stream;
