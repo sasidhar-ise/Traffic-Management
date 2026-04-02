@@ -1,50 +1,62 @@
-const video = document.getElementById('vid');
-const log = document.getElementById('log');
-const redLight = document.getElementById('red');
-const greenLight = document.getElementById('green');
-const signalText = document.getElementById('signal-text');
+const video = document.getElementById('webcam');
+const aiStatus = document.getElementById('ai-status');
+const stopLight = document.getElementById('stop-light');
+const goLight = document.getElementById('go-light');
+const instruction = document.getElementById('instruction');
+const canvas = document.getElementById('proc-canvas');
+
+// 1. Activate Camera Sensor
 navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
     .then(stream => {
         video.srcObject = stream;
-        log.innerText = "System Online: Scanning Lane 1";
+        aiStatus.innerText = "> SENSOR ONLINE: MONITORING LANE";
     })
     .catch(err => {
-        log.innerText = "SENSOR ERROR: " + err.message;
+        aiStatus.innerText = "> ERROR: CAMERA BLOCKED";
     });
-async function processTraffic() {
-    log.innerText = "Processing Lane Density...";
+
+// 2. AI Recognition Cycle
+async function analyzeTraffic() {
+    aiStatus.innerText = "> ANALYZING DENSITY...";
     
-    const canvas = document.getElementById('canvas');
-    const context = canvas.getContext('2d');
+    const ctx = canvas.getContext('2d');
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
-    context.drawImage(video, 0, 0);
+    ctx.drawImage(video, 0, 0);
+
     try {
         const result = await Tesseract.recognize(canvas.toDataURL(), 'eng');
-        const text = result.data.text.replace(/[^A-Z0-9]/gi, "");
-        const density = text.length;
+        // Clean text to find alphanumeric plate patterns
+        const detected = result.data.text.replace(/[^A-Z0-9]/gi, "");
+        
+        aiStatus.innerText = `> DETECTED: ${detected || "NONE"}`;
 
-        log.innerText = `Lane Density Score: ${density}`;
-
-        if (density > 3) {
-            triggerGreen();
+        // If more than 3 characters detected, trigger the signal
+        if (detected.length > 3) {
+            changeToGreen();
         }
-    } catch (error) {
-        console.error("OCR Failed:", error);
+    } catch (e) {
+        console.error(e);
     }
 }
 
-function triggerGreen() {
-    redLight.classList.remove('active-red');
-    greenLight.classList.add('active-green');
-    signalText.innerText = "STATUS: GREEN (TRAFFIC DETECTED)";
-    signalText.style.color = "#2ecc71";
+function changeToGreen() {
+    if (goLight.classList.contains('active')) return;
+
+    stopLight.classList.remove('active');
+    goLight.classList.add('active');
+    instruction.innerText = "GO";
+    instruction.style.color = "#00ff88";
+
+    // Set timer to return to Red after 6 seconds
     setTimeout(() => {
-        greenLight.classList.remove('active-green');
-        redLight.classList.add('active-red');
-        signalText.innerText = "STATUS: RED (WAITING)";
-        signalText.style.color = "#ffffff";
+        goLight.classList.remove('active');
+        stopLight.classList.add('active');
+        instruction.innerText = "STOP";
+        instruction.style.color = "#ff3b3b";
+        aiStatus.innerText = "> LANE CLEAR: WAITING...";
     }, 6000);
 }
 
-setInterval(processTraffic, 10000);
+// Automatically scan for vehicles every 5 seconds
+setInterval(analyzeTraffic, 5000);
