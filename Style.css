@@ -1,45 +1,59 @@
 body {
+    background-color: #0f0f0f;
+    color: white;
     font-family: 'Segoe UI', sans-serif;
-    text-align: center;
-    background: #1a1a1a;
-    color: #ffffff;
-    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
 }
 
-#video-container {
-    position: relative;
-    display: inline-block;
-    border: 5px solid #333;
-    border-radius: 15px;
-    overflow: hidden;
-}
-
-video {
-    width: 100%;
+.system-container {
+    background: #1e1e1e;
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 0 30px rgba(0,0,0,0.8);
+    width: 90%;
     max-width: 500px;
-    display: block;
+    text-align: center;
 }
 
-.sensor-line {
+.viewport {
+    position: relative;
+    border: 4px solid #333;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 20px;
+}
+
+video { width: 100%; display: block; }
+
+.scanner-bar {
     position: absolute;
-    top: 60%;
-    left: 0;
     width: 100%;
-    height: 2px;
-    background: rgba(0, 255, 0, 0.5);
-    box-shadow: 0 0 10px #0f0;
+    height: 3px;
+    background: #00ff00;
+    box-shadow: 0 0 15px #00ff00;
+    top: 0;
+    animation: scan 2.5s infinite ease-in-out;
 }
 
-.traffic-light {
-    background: #333;
-    width: 80px;
+@keyframes scan {
+    0% { top: 10%; }
+    50% { top: 90%; }
+    100% { top: 10%; }
+}
+
+.signal-post {
+    background: #222;
+    width: 60px;
     padding: 15px;
-    border-radius: 40px;
-    margin: 20px auto;
+    border-radius: 30px;
+    margin: 0 auto 20px;
     display: flex;
     flex-direction: column;
     gap: 15px;
-    align-items: center;
 }
 
 .light {
@@ -47,18 +61,18 @@ video {
     height: 50px;
     border-radius: 50%;
     background: #111;
-    transition: 0.3s;
+    transition: 0.5s;
 }
 
-.active-red { background: #ff4d4d; box-shadow: 0 0 25px #ff4d4d; }
-.active-green { background: #2ecc71; box-shadow: 0 0 25px #2ecc71; }
+.red.active { background: #ff3b3b; box-shadow: 0 0 25px #ff3b3b; }
+.green.active { background: #00ff88; box-shadow: 0 0 25px #00ff88; }
 
-#log {
+#ai-status {
     background: #000;
     color: #00ff00;
     padding: 10px;
-    border-radius: 5px;
     font-family: monospace;
-    max-width: 500px;
-    margin: 10px auto;
+    font-size: 13px;
+    border-radius: 5px;
+    margin-top: 15px;
 }
