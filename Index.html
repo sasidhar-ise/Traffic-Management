@@ -3,27 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart Traffic Management - Experiment 2</title>
-    <link rel="stylesheet" href="Style.css">
+    <title>AI Traffic Control System</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h2>Smart Traffic Management System</h2>
-    
-    <div id="video-container">
-        <video id="vid" autoplay playsinline></video>
-        <canvas id="canvas" style="display:none;"></canvas>
-        <div class="sensor-line"></div>
+    <div class="system-container">
+        <h2>Smart City: AI Traffic Sensor</h2>
+        
+        <div class="viewport">
+            <video id="webcam" autoplay playsinline></video>
+            <div class="scanner-bar"></div>
+        </div>
+
+        <div class="signal-post">
+            <div id="stop-light" class="light red active"></div>
+            <div id="go-light" class="light green"></div>
+        </div>
+
+        <div class="display-panel">
+            <h1 id="instruction">STOP</h1>
+            <div id="ai-status">Initializing AI Engine...</div>
+        </div>
     </div>
 
-    <div class="traffic-light">
-        <div id="red" class="light active-red"></div>
-        <div id="green" class="light"></div>
-    </div>
-
-    <h3 id="signal-text">STATUS: RED (WAITING)</h3>
-    <div id="log">Initializing AI Sensor...</div>
-
+    <canvas id="proc-canvas" style="display:none;"></canvas>
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
-    <script src="Script.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
